@@ -26,52 +26,48 @@ def main():
     SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption('Flappy Bird')
 
-    while True:
-        # background sprites
-        IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
+    IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
     	# numbers sprites for score display
-    	IMAGES['numbers'] = (
-        pygame.image.load('assets/sprites/0.png').convert(),
-        pygame.image.load('assets/sprites/1.png').convert(),
-        pygame.image.load('assets/sprites/2.png').convert(),
-        pygame.image.load('assets/sprites/3.png').convert(),
-        pygame.image.load('assets/sprites/4.png').convert(),
-        pygame.image.load('assets/sprites/5.png').convert(),
-        pygame.image.load('assets/sprites/6.png').convert(),
-        pygame.image.load('assets/sprites/7.png').convert(),
-        pygame.image.load('assets/sprites/8.png').convert(),
-        pygame.image.load('assets/sprites/9.png').convert()
-        )        
-
-	IMAGES['player'] = (
-            pygame.image.load(PLAYERS_LIST[0]).convert(),
-            pygame.image.load(PLAYERS_LIST[1]).convert(),
-            pygame.image.load(PLAYERS_LIST[2]).convert(),
+    IMAGES['numbers'] = (
+        pygame.image.load('assets/sprites/0.png').convert_alpha(),
+        pygame.image.load('assets/sprites/1.png').convert_alpha(),
+        pygame.image.load('assets/sprites/2.png').convert_alpha(),
+        pygame.image.load('assets/sprites/3.png').convert_alpha(),
+        pygame.image.load('assets/sprites/4.png').convert_alpha(),
+        pygame.image.load('assets/sprites/5.png').convert_alpha(),
+        pygame.image.load('assets/sprites/6.png').convert_alpha(),
+        pygame.image.load('assets/sprites/7.png').convert_alpha(),
+        pygame.image.load('assets/sprites/8.png').convert_alpha(),
+        pygame.image.load('assets/sprites/9.png').convert_alpha()
+        )  
+    IMAGES['player'] = (
+            pygame.image.load(PLAYERS_LIST[0]).convert_alpha(),
+            pygame.image.load(PLAYERS_LIST[1]).convert_alpha(),
+            pygame.image.load(PLAYERS_LIST[2]).convert_alpha(),
         )
-        IMAGES['pipe'] = (
+    IMAGES['pipe'] = (
             pygame.transform.rotate(
-                pygame.image.load(PIPE).convert(), 180),
-            pygame.image.load(PIPE).convert(),
+                pygame.image.load(PIPE).convert_alpha(), 180),
+            pygame.image.load(PIPE).convert_alpha(),
         )
-
-    	if 'win' in sys.platform:
-       		soundExt = '.wav'
-    	else:
-        	soundExt = '.ogg'
         
-        SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
-        SOUNDS['point']   = pygame.mixer.Sound('assets/audio/point' + soundExt)
-
-        mainGame()
+    if 'win' in sys.platform:
+       	soundExt = '.wav'	
+    else:
+        soundExt = '.ogg'
+    SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
+    SOUNDS['point']   = pygame.mixer.Sound('assets/audio/point' + soundExt)
+    while True:
+    	mainGame()
 
 def mainGame():
     playerFlap = cycle([0, 1, 2, 1])
     playerx, playery = SCREENWIDTH*0.2, SCREENHEIGHT/2
     playerVelY    =  -9   # player's velocity along Y, default same as playerFlapped
-    playerAccY    =   1   # players downward accleration
-    playerFlapAcc =  -9   # players speed on flapping
+    gravity    =   1   # players downward accleration
+    playerUp =  -9   # players speed on flapping
     loopIter      =   0
-    playerIndex   =   0
+    playerWingPos   =   0
     score         =   0
     # get 2 new pipes to add to upperPipes lowerPipes list
     newPipe1 = getRandomPipe()
@@ -97,13 +93,13 @@ def mainGame():
                 pygame.quit()
                 sys.exit()
 	    if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-		playerVelY = playerFlapAcc #accelerate karvao
+		playerVelY = playerUp #accelerate karvao
                 SOUNDS['wing'].play()
-        playerVelY += playerAccY
+        playerVelY += gravity
         playery += playerVelY
 
         # check for crash here
-        crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
+        crashTest = checkCrash({'x': playerx, 'y': playery},
                                upperPipes, lowerPipes)
         if crashTest[0]:
             return {
@@ -125,28 +121,25 @@ def mainGame():
 	
 	#in simple terms, player wing flap karane 
         if (loopIter + 1) % 3 == 0:
-            playerIndex = next(playerFlap)
+            playerWingPos = next(playerFlap)
         loopIter = (loopIter + 1) % 30
         
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
             uPipe['x'] += pipeVelX
             lPipe['x'] += pipeVelX
 	
-        # add new pipe when first pipe is about to touch left of screen
-        if 0 <= upperPipes[0]['x'] <= 2:
+	# remove first pipe if its out of the screen and add new one 
+        if upperPipes[0]['x'] < -IMAGES['pipe'][0].get_width(): #obviously -(width) hi hoga
+            upperPipes.pop(0)
+            lowerPipes.pop(0)
             newPipe = getRandomPipe()
             upperPipes.append(newPipe[0])
             lowerPipes.append(newPipe[1])
-	
-        # remove first pipe if its out of the screen
-        if upperPipes[0]['x'] < -IMAGES['pipe'][0].get_width():
-            upperPipes.pop(0)
-            lowerPipes.pop(0)
         
 
         # draw sprites
         SCREEN.blit(IMAGES['background'], (0,0))
-	SCREEN.blit(IMAGES['player'][playerIndex], (playerx, playery))
+	SCREEN.blit(IMAGES['player'][playerWingPos], (playerx, playery))
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
             SCREEN.blit(IMAGES['pipe'][0], (uPipe['x'], uPipe['y']))
             SCREEN.blit(IMAGES['pipe'][1], (lPipe['x'], lPipe['y']))
@@ -157,7 +150,7 @@ def mainGame():
 def getRandomPipe():
     """returns a randomly generated pipe"""
     # y of gap between upper and lower pipe
-    gapY = random.randrange(Min_PipeY, int(Max_PipeY)) #Range for bottom left most y coordinate of upper pipe 
+    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
     pipeHeight = IMAGES['pipe'][0].get_height()
     pipeX = SCREENWIDTH + 10
     
@@ -168,7 +161,7 @@ def getRandomPipe():
     
 def showScore(score):
     """displays score in center of screen"""
-    scoreDigits = list(str(score))
+    scoreDigits = str(score)
     totalWidth = 0 # total width of all numbers to be printed
 
     for digit in scoreDigits:
@@ -184,7 +177,7 @@ def showScore(score):
 
 def checkCrash(player, upperPipes, lowerPipes):
     """returns True if player collides with base or pipes."""
-    pi = player['index']
+
     player['w'] = IMAGES['player'][0].get_width()
     player['h'] = IMAGES['player'][0].get_height()
 

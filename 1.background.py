@@ -17,9 +17,10 @@ def main():
     FPSCLOCK = pygame.time.Clock() #to track time
     SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption('Flappy Bird')
+    IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
 
     while True:
-        IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
+
         mainGame()
 
 def mainGame():
