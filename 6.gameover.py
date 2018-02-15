@@ -64,9 +64,39 @@ def main():
     SOUNDS['hit']    = pygame.mixer.Sound('assets/audio/hit' + soundExt)
     
     while True:
+        ###mainGame()
+        '''
+        ###Change the above code to receive dictionary returned by mainGame
         crashInfo = mainGame()
+    ### call showGameOverScreen(your_mainGame_dictionary) to end the game
 	showGameOverScreen(crashInfo)
-	
+	'''
+def getRandomPipe():
+    """returns a randomly generated pipe"""
+    # y of gap between upper and lower pipe
+    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
+    pipeHeight = IMAGES['pipe'][0].get_height()
+    pipeX = SCREENWIDTH + 10
+    
+    return [
+        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
+        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
+    ]
+
+def showScore(score):
+    """displays score in center of screen"""
+    scoreDigits = str(score)
+    totalWidth = 0 # total width of all numbers to be printed
+
+    for digit in scoreDigits:
+        totalWidth += IMAGES['numbers'][int(digit)].get_width()
+
+    Xoffset = (SCREENWIDTH - totalWidth) /2
+
+    for digit in scoreDigits:
+        SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
+        Xoffset += IMAGES['numbers'][int(digit)].get_width()
+
 
 def mainGame():
     playerFlap = cycle([0, 1, 2, 1])
@@ -157,32 +187,6 @@ def mainGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
         
-def getRandomPipe():
-    """returns a randomly generated pipe"""
-    # y of gap between upper and lower pipe
-    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
-    pipeHeight = IMAGES['pipe'][0].get_height()
-    pipeX = SCREENWIDTH + 10
-    
-    return [
-        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
-        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
-    ]
-
-def showScore(score):
-    """displays score in center of screen"""
-    scoreDigits = str(score)
-    totalWidth = 0 # total width of all numbers to be printed
-
-    for digit in scoreDigits:
-        totalWidth += IMAGES['numbers'][int(digit)].get_width()
-
-    Xoffset = (SCREENWIDTH - totalWidth) /2
-
-    for digit in scoreDigits:
-        SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
-        Xoffset += IMAGES['numbers'][int(digit)].get_width()
-
 def checkCrash(player, upperPipes, lowerPipes):
     """returns True if player collides with base or pipes."""
     player['w'] = IMAGES['player'][0].get_width()
@@ -213,20 +217,24 @@ def checkCrash(player, upperPipes, lowerPipes):
     
 def showGameOverScreen(crashInfo):
     """crashes the player down and shows gameover image"""
+    '''
+    ### Create variables to store all the data passed into crashInfo
+    ### score, playerx, playery, playerVelY, gravity=playerVelY, upperPipes, lowerPipes
     score = crashInfo['score']
     playerx = crashInfo['x']
     playery = crashInfo['y']
-    playerHeight = IMAGES['player'][0].get_height()
     playerVelY = crashInfo['playerVelY']
     gravity = crashInfo['playerVelY']
-
     upperPipes, lowerPipes = crashInfo['upperPipes'], crashInfo['lowerPipes']
 
-    # play hit and die sounds
+    ### Get player height from IMAGES
+    playerHeight = IMAGES['player'][0].get_height()
+
+    ### play hit and die sounds
     SOUNDS['hit'].play()
     if not crashInfo['groundCrash']:
         SOUNDS['die'].play()
-
+    '''
     while True:
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -237,10 +245,13 @@ def showGameOverScreen(crashInfo):
                     return
 	# player velocity change
         playerVelY += gravity
-        # player y shift till bird touches the ground
+        '''
+        
+        ###Make playery increase with same velocity until bird touches the ground
         if playery + playerHeight < SCREENHEIGHT:
             playery += playerVelY
 
+        '''
         # draw sprites
         SCREEN.blit(IMAGES['background'], (0,0))
 

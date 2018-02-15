@@ -8,10 +8,12 @@ SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 BACKGROUND = 'assets/sprites/background-day.png'
 '''
+### Create another global constant to store a tuple of string paths of the Red bird
 PLAYERS_LIST = (
         'assets/sprites/redbird-upflap.png',
         'assets/sprites/redbird-midflap.png',
         'assets/sprites/redbird-downflap.png')
+### Create an empty dictionary variable to store SOUNDS
 SOUNDS = {}
 '''
 IMAGES = {}
@@ -23,18 +25,19 @@ def main():
     pygame.display.set_caption('Flappy Bird')
     IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
     '''
+    ### Add the 3 converted images as a tuple to IMAGES with key 'player'
     IMAGES['player'] = (
             pygame.image.load(PLAYERS_LIST[0]).convert_alpha(),
             pygame.image.load(PLAYERS_LIST[1]).convert_alpha(),
             pygame.image.load(PLAYERS_LIST[2]).convert_alpha(),
         )
-  
+    ### Sound extension selection based on windows and ubuntu
     if 'win' in sys.platform:
        	soundExt = '.wav'
     else:
         soundExt = '.ogg'
+    ### Add wing sound into the SOUNDS dictionary with key 'wing'
     SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
-    #######BEFORE BREAK 12:30 TAK
     '''
     while True:
         mainGame()
@@ -55,11 +58,13 @@ def mainGame():
                 pygame.quit()
                 sys.exit()
         ''''
+        ### Key event to make bird jump using space or up keys. also play 'wing' sound
 	    if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
 		playerVelY = playerUp #accelerate karvao
                 SOUNDS['wing'].play()
-        
+        ### Increase falling speed using gravity constant defined above
         playerVelY += gravity
+        ### Change coordinate according to new speed
         playery += playerVelY
 
 	#in simple terms, player wing flap karane 
@@ -68,6 +73,7 @@ def mainGame():
         loopIter = (loopIter + 1) % 30 #har 30 frames me flap
 	'''
         SCREEN.blit(IMAGES['background'], (0,0))
+        '''### Paint the bird image with appropriate wing position calculated above at player coordinates'''
 	#######SCREEN.blit(IMAGES['player'][playerWingPos], (playerx, playery))
         pygame.display.update()
         FPSCLOCK.tick(FPS)

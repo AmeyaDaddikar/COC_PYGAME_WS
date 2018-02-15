@@ -28,6 +28,8 @@ def main():
     IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
     	# numbers sprites for score display
     	# numbers sprites for score display
+    '''
+    ### Load all the number sprites(images) into the dictionary with key = 'numbers'
     IMAGES['numbers'] = (
         pygame.image.load('assets/sprites/0.png').convert_alpha(),
         pygame.image.load('assets/sprites/1.png').convert_alpha(),
@@ -40,6 +42,7 @@ def main():
         pygame.image.load('assets/sprites/8.png').convert_alpha(),
         pygame.image.load('assets/sprites/9.png').convert_alpha()
         )  
+    '''
     IMAGES['player'] = (
             pygame.image.load(PLAYERS_LIST[0]).convert_alpha(),
             pygame.image.load(PLAYERS_LIST[1]).convert_alpha(),
@@ -56,12 +59,46 @@ def main():
     else:
         soundExt = '.ogg'
     SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
+    '''
+    ### Create an entry into SOUNDS dictionary to store 'point' sound
     SOUNDS['point']   = pygame.mixer.Sound('assets/audio/point' + soundExt)
-
+    '''
 
     while True:
         mainGame()
+def getRandomPipe():
+    """returns a randomly generated pipe"""
+    # y of gap between upper and lower pipe
+    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
+    pipeHeight = IMAGES['pipe'][0].get_height()
+    pipeX = SCREENWIDTH + 10
+    
+    return [
+        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
+        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
+    ]
+    
+def showScore(score):
+    """displays score in center of screen"""
+    '''
+    ### create scoreDigits to store score as a list (type cast)
+    scoreDigits = str(score) #ye naya hai, shockingly, typecasting a two digit string to list splits it into individual digits
+    
+    ### Initialize totalWidth to 0
+    totalWidth = 0 # total width of all numbers to be printed
 
+    ### Set totalWidth according to size of digit images (use IMAGES)
+    for digit in scoreDigits:
+        totalWidth += IMAGES['numbers'][int(digit)].get_width() #set width
+
+    ### Set Xoffset to store position of score from the left
+    Xoffset = (SCREENWIDTH - totalWidth) /2 #set at what distance from left you want score to appear
+
+    ### Blit all digits iteratively and increment Xoffset accordingly
+    for digit in scoreDigits:
+        SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
+        Xoffset += IMAGES['numbers'][int(digit)].get_width()
+    '''
 def mainGame():
     playerFlap = cycle([0, 1, 2, 1])
     playerx, playery = SCREENWIDTH*0.2, SCREENHEIGHT/2
@@ -101,14 +138,22 @@ def mainGame():
         playery += playerVelY
 
 	# check for score
+    '''
+        ### Locate center of player bird's location and store it in a variable
         playerMidPos = playerx + IMAGES['player'][0].get_width() / 2
+
+        ### iterate over upperPipes and check whether bird crossed pipe or not, update score accordingly
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + IMAGES['pipe'][0].get_width() / 2
-            if pipeMidPos <= playerMidPos < pipeMidPos + 3: #+3 trail and error se ata hai, we need to choose such a constant such that uss range me bird ka x coordinate exactly once hi aye..bird ke coordinates print kar kar ke ata hai ye
+            if pipeMidPos <= playerMidPos < pipeMidPos + 3: 
+                    ### +3 trial and error se ata hai, we need to choose such a constant such 
+                    ### that uss range me bird ka x coordinate exactly once hi aye..bird ke 
+                    ### coordinates print kar kar ke ata hai ye
                 score += 1
 		print score
+                ### Play 'point' sound
                 SOUNDS['point'].play()
-	
+	'''
 	#in simple terms, player wing flap karane 
         if (loopIter + 1) % 3 == 0:
             playerWingPos = next(playerFlap)
@@ -134,35 +179,14 @@ def mainGame():
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
             SCREEN.blit(IMAGES['pipe'][0], (uPipe['x'], uPipe['y']))
             SCREEN.blit(IMAGES['pipe'][1], (lPipe['x'], lPipe['y']))
+        
+        '''
+        ###call showScore
         showScore(score)
+        '''
         pygame.display.update()
         FPSCLOCK.tick(FPS)
         
-def getRandomPipe():
-    """returns a randomly generated pipe"""
-    # y of gap between upper and lower pipe
-    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
-    pipeHeight = IMAGES['pipe'][0].get_height()
-    pipeX = SCREENWIDTH + 10
-    
-    return [
-        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
-        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
-    ]
-    
-def showScore(score):
-    """displays score in center of screen"""
-    scoreDigits = str(score) #ye naya hai, shockingly, typecasting a two digit string to list splits it into individual digits
-    totalWidth = 0 # total width of all numbers to be printed
-
-    for digit in scoreDigits:
-        totalWidth += IMAGES['numbers'][int(digit)].get_width() #set width
-
-    Xoffset = (SCREENWIDTH - totalWidth) /2 #set at what distance from left you want score to appear
-
-    for digit in scoreDigits:
-        SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
-        Xoffset += IMAGES['numbers'][int(digit)].get_width()
 
 
 if __name__ == '__main__':

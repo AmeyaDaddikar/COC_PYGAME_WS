@@ -34,6 +34,7 @@ def main():
             pygame.image.load(PLAYERS_LIST[2]).convert_alpha(),
         )
         '''
+    ### Create a tuple storing the pair of top and bottom pipes and store it into IMAGES with 'pipe' key
     IMAGES['pipe'] = (
             pygame.transform.rotate(
                 pygame.image.load(PIPE).convert_alpha(), 180),
@@ -52,15 +53,24 @@ def main():
         
 def getRandomPipe():
     """returns a randomly generated pipe"""
-    # y of gap between upper and lower pipe
+    '''
+    # height of gap between upper and lower pipe
+    ### generate a random coordinate for bottom left corner of top pipe between Min_PipeY and Max_PipeY 
     gapY = random.randrange(Min_PipeY,Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
+
+    ### Calculate pipe height from the image of pipes
     pipeHeight = IMAGES['pipe'][0].get_height()
+
+    ### Set a random coordinate for pipeX preferably outside the SCREENWIDTH
     pipeX = SCREENWIDTH + 10
     
+    ### Create and return a pair of dictionaries storing x and y coordinates of top and bottom pipes
+    ### These coordinates will be used to blit the pipe onto the screen later
     return [
         {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
         {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
     ]
+    '''
 
 
 def mainGame():
@@ -71,23 +81,31 @@ def mainGame():
     playerUp =  -9   # players speed on flapping
     loopIter      =   0
     playerWingPos   =   0
+    '''
     # get 2 new pipes to add to upperPipes lowerPipes list
+    ### Generate a random pipe using the function created above
     newPipe1 = getRandomPipe()
     newPipe2 = getRandomPipe()
 
     # list of upper pipes
+    ### Create a list of Upper pipes(as dictionaries returned by getRandomPipe())
+    ### and set correct x coordinates 
     upperPipes = [
         {'x': newPipe1[0]['x'] , 'y': newPipe1[0]['y']},
         {'x': newPipe2[0]['x'] + (SCREENWIDTH / 2), 'y': newPipe2[0]['y']},
     ] #inital position of two upper pipes
 
     # list of lowerpipe
+    ### Create a list of Lower pipes same as above
     lowerPipes = [
         {'x': newPipe1[1]['x'] , 'y': newPipe1[1]['y']},
         {'x': newPipe2[1]['x'] + (SCREENWIDTH / 2), 'y': newPipe2[1]['y']},
     ] #inital position of two lower pipes
 
+    '''
+    ### Velocity of pipes is a constant (Can be set variable to change difficulty)
     pipeVelX = -4
+
 
     while True:
     	for event in pygame.event.get():
@@ -104,7 +122,8 @@ def mainGame():
         if (loopIter + 1) % 3 == 0:
             playerWingPos = next(playerFlap)
         loopIter = (loopIter + 1) % 30
-        
+        '''
+        ### Change x coordinates of pipe according to pipeVelX 
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
             uPipe['x'] += pipeVelX
             lPipe['x'] += pipeVelX
@@ -116,12 +135,15 @@ def mainGame():
             newPipe = getRandomPipe()
             upperPipes.append(newPipe[0])
             lowerPipes.append(newPipe[1])
-
+        '''
         SCREEN.blit(IMAGES['background'], (0,0))
 	SCREEN.blit(IMAGES['player'][playerWingPos], (playerx, playery))
+        '''
+        ### Blit the 2 upper and lower pipes on to the SCREEN
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
             SCREEN.blit(IMAGES['pipe'][0], (uPipe['x'], uPipe['y']))
             SCREEN.blit(IMAGES['pipe'][1], (lPipe['x'], lPipe['y']))
+        '''
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 

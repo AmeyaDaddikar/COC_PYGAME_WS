@@ -59,7 +59,71 @@ def main():
     SOUNDS['point']   = pygame.mixer.Sound('assets/audio/point' + soundExt)
     while True:
     	mainGame()
+def getRandomPipe():
+    """returns a randomly generated pipe"""
+    # y of gap between upper and lower pipe
+    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
+    pipeHeight = IMAGES['pipe'][0].get_height()
+    pipeX = SCREENWIDTH + 10
+    
+    return [
+        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
+        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
+    ]
+    
+def showScore(score):
+    """displays score in center of screen"""
+    scoreDigits = str(score)
+    totalWidth = 0 # total width of all numbers to be printed
 
+    for digit in scoreDigits:
+        totalWidth += IMAGES['numbers'][int(digit)].get_width()
+
+    Xoffset = (SCREENWIDTH - totalWidth) /2
+
+    for digit in scoreDigits:
+        SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
+        Xoffset += IMAGES['numbers'][int(digit)].get_width()
+
+
+
+def checkCrash(player, upperPipes, lowerPipes):
+    """returns a list[p1, p2] p1 is True if player collides and p2 is True if player hits the ground."""
+    '''
+    ### player is a dictionary having keys 'x', 'y'
+    ### Add keys 'w' and 'h' to store player image's width and height
+    player['w'] = IMAGES['player'][0].get_width()
+    player['h'] = IMAGES['player'][0].get_height()
+
+    # if player crashes into ground
+    ###Check for ground crash and return a list of size 2 with both elements True
+    if player['y'] + player['h'] >= SCREENHEIGHT:
+        return [True, True] #first true means crash hua hai, second true means ground crash hua hai
+    ### Else block for above check
+    else:
+        ### Generate a rectangle using Rect function
+        playerRect = pygame.Rect(player['x'], player['y'],
+                      player['w'], player['h'])
+        ### get Pipe width and heights as pipeW, pipeH
+        pipeW = IMAGES['pipe'][0].get_width()
+        pipeH = IMAGES['pipe'][0].get_height()
+
+        ### Iterate over upper and lower pipes and draw rectangles around them same as above
+        for uPipe, lPipe in zip(upperPipes, lowerPipes):
+            # upper and lower pipe rects
+            uPipeRect = pygame.Rect(uPipe['x'], uPipe['y'], pipeW, pipeH)
+            lPipeRect = pygame.Rect(lPipe['x'], lPipe['y'], pipeW, pipeH)
+
+            ### Check for collision of rectangles using colliderect function with both pipes
+            ### Return True and False accordingly
+            uCollide = playerRect.colliderect(uPipeRect) #simple stuff
+            lCollide = playerRect.colliderect(lPipeRect)
+
+            if uCollide or lCollide:
+                return [True, False] #first true means crash hua hai, second false means ground crash nahi hua hai, if no ground crash then we need to make the bird fall under gravity(ye gameover me kiya hai)
+    ### return False if no crash occurs
+    return [False, False]
+    '''
 def mainGame():
     playerFlap = cycle([0, 1, 2, 1])
     playerx, playery = SCREENWIDTH*0.2, SCREENHEIGHT/2
@@ -97,10 +161,14 @@ def mainGame():
                 SOUNDS['wing'].play()
         playerVelY += gravity
         playery += playerVelY
-
+        '''
         # check for crash here
+        ### Store the result of checkCrash into a variable 
         crashTest = checkCrash({'x': playerx, 'y': playery},
                                upperPipes, lowerPipes)
+
+        ### if crash has occured return a dictionary with the following details
+        ### playery, groundCrash, upperPipes, lowerPipes, score, playerVelY 
         if crashTest[0]:
             return {
                 'y': playery,
@@ -110,7 +178,7 @@ def mainGame():
                 'score': score,
                 'playerVelY': playerVelY,
             }
-
+        '''
 	# check for score
         playerMidPos = playerx + IMAGES['player'][0].get_width() / 2
         for pipe in upperPipes:
@@ -147,62 +215,6 @@ def mainGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
         
-def getRandomPipe():
-    """returns a randomly generated pipe"""
-    # y of gap between upper and lower pipe
-    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
-    pipeHeight = IMAGES['pipe'][0].get_height()
-    pipeX = SCREENWIDTH + 10
-    
-    return [
-        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
-        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
-    ]
-    
-def showScore(score):
-    """displays score in center of screen"""
-    scoreDigits = str(score)
-    totalWidth = 0 # total width of all numbers to be printed
-
-    for digit in scoreDigits:
-        totalWidth += IMAGES['numbers'][int(digit)].get_width()
-
-    Xoffset = (SCREENWIDTH - totalWidth) /2
-
-    for digit in scoreDigits:
-        SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
-        Xoffset += IMAGES['numbers'][int(digit)].get_width()
-
-
-
-def checkCrash(player, upperPipes, lowerPipes):
-    """returns True if player collides with base or pipes."""
-
-    player['w'] = IMAGES['player'][0].get_width()
-    player['h'] = IMAGES['player'][0].get_height()
-
-    # if player crashes into ground
-    if player['y'] + player['h'] >= SCREENHEIGHT:
-        return [True, True] #first true means crash hua hai, second true means ground crash hua hai
-    else:
-
-        playerRect = pygame.Rect(player['x'], player['y'],
-                      player['w'], player['h'])
-        pipeW = IMAGES['pipe'][0].get_width()
-        pipeH = IMAGES['pipe'][0].get_height()
-
-        for uPipe, lPipe in zip(upperPipes, lowerPipes):
-            # upper and lower pipe rects
-            uPipeRect = pygame.Rect(uPipe['x'], uPipe['y'], pipeW, pipeH)
-            lPipeRect = pygame.Rect(lPipe['x'], lPipe['y'], pipeW, pipeH)
-
-            uCollide = playerRect.colliderect(uPipeRect) #simple stuff
-            lCollide = playerRect.colliderect(lPipeRect)
-
-            if uCollide or lCollide:
-                return [True, False] #first true means crash hua hai, second false means ground crash nahi hua hai, if no ground crash then we need to make the bird fall under gravity(ye gameover me kiya hai)
-
-    return [False, False]
 
 if __name__ == '__main__':
     main()
