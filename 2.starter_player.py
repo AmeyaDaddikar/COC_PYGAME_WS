@@ -105,7 +105,7 @@ def mainGame():
 
 	
 """
-............Task two is complete if you can control the bird with UP or SPACEBAR KEY, if neither of these keys are pressed, the bird will freefall under gravity. Also, the wings flap after some interval.......................
+............Task two is complete if you can control the bird with UP or SPACEBAR KEY with the 'wing' sound being played, if neither of these keys are pressed, the bird will freefall under gravity. Also, the wings flap after some interval.......................
 """
 if __name__ == '__main__':
     main()
