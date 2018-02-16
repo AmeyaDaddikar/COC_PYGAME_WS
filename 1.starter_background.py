@@ -29,7 +29,7 @@ def main():
 2.Set the display window of (SCREENWIDTH, SCREENHEIGHT) size to SCREEN 
 3.Set the title of window as 'Flapy Bird'
 4.Load the background image from its path into pygame
-5.Doing ________ on images before painting the them on the display is a good practice and supports faster blitting
+5.Calling ________ on images before painting the them on the display is a good practice and supports faster blitting
 6.Store this final background image into the empty 'IMAGES' dictionary created above with the key 'background'
 7.Call the main game
 """
