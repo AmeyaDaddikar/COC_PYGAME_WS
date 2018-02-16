@@ -1,3 +1,10 @@
+#.............................Fifth Task..................................................
+#......We now check for collision between bird and pipes or ground
+#......We first check if there's any collision at all
+#......If there's collision then whether it's ground collision or pipe collision
+#......If it's pipe collision, we make it fall under gravity
+#......Follow the instructions given by comments on each line if you need hints
+#.........................................................................................
 from itertools import cycle
 import random
 import sys
@@ -8,7 +15,7 @@ FPS = 30
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 BACKGROUND   = 'assets/sprites/background-day.png'
-PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
+PIPEGAPSIZE  = 100
 Max_PipeY    =  220
 Min_PipeY    =  100
 
@@ -27,7 +34,7 @@ def main():
     pygame.display.set_caption('Flappy Bird')
 
     IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
-    	# numbers sprites for score display
+    	
     IMAGES['numbers'] = (
         pygame.image.load('assets/sprites/0.png').convert_alpha(),
         pygame.image.load('assets/sprites/1.png').convert_alpha(),
@@ -63,27 +70,22 @@ def main():
 def mainGame():
     playerFlap = cycle([0, 1, 2, 1])
     playerx, playery = SCREENWIDTH*0.2, SCREENHEIGHT/2
-    playerVelY    =  -9   # player's velocity along Y, default same as playerFlapped
-    gravity    =   1   # players downward accleration
-    playerUp =  -9   # players speed on flapping
+    playerVelY    =   4
+    gravity       =   1   
+    playerUp      =  -9   
     loopIter      =   0
-    playerWingPos   =   0
+    playerWingPos =   0
     score         =   0
-    # get 2 new pipes to add to upperPipes lowerPipes list
     newPipe1 = getRandomPipe()
     newPipe2 = getRandomPipe()
-
-    # list of upper pipes
     upperPipes = [
         {'x': newPipe1[0]['x'] , 'y': newPipe1[0]['y']},
         {'x': newPipe1[0]['x'] + (SCREENWIDTH / 2), 'y': newPipe2[0]['y']},
-    ] #inital position of upper pipe
-
-    # list of lowerpipe
+    ] 
     lowerPipes = [
         {'x': newPipe1[1]['x'] , 'y': newPipe1[1]['y']},
         {'x': newPipe1[1]['x'] + (SCREENWIDTH / 2), 'y': newPipe2[1]['y']},
-    ] #inital position of lower pipe
+    ] 
 
     pipeVelX = -4
 
@@ -98,7 +100,10 @@ def mainGame():
         playerVelY += gravity
         playery += playerVelY
 
-        # check for crash here
+        """
+	We check for crash here. To do so, we'll pass the coordinates of bird and all the pipes in the screen
+	If there's any collision i.e. if crashTest[0] is True, e return to the main() function to show gameover(sixth task)
+	"""
         crashTest = checkCrash({'x': playerx, 'y': playery},
                                upperPipes, lowerPipes)
         if crashTest[0]:
@@ -111,15 +116,16 @@ def mainGame():
                 'playerVelY': playerVelY,
             }
 
-	# check for score
+	#Locate the player center's x position on the SCREEN
         playerMidPos = playerx + IMAGES['player'][0].get_width() / 2
+	
+	#If the player's center has crossed any pipe's center, update the score and play 'point' sound
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + IMAGES['pipe'][0].get_width() / 2
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
                 score += 1
                 SOUNDS['point'].play()
 	
-	#in simple terms, player wing flap karane 
         if (loopIter + 1) % 3 == 0:
             playerWingPos = next(playerFlap)
         loopIter = (loopIter + 1) % 30
@@ -128,8 +134,7 @@ def mainGame():
             uPipe['x'] += pipeVelX
             lPipe['x'] += pipeVelX
 	
-	# remove first pipe if its out of the screen and add new one 
-        if upperPipes[0]['x'] < -IMAGES['pipe'][0].get_width(): #obviously -(width) hi hoga
+        if upperPipes[0]['x'] < -IMAGES['pipe'][0].get_width(): 
             upperPipes.pop(0)
             lowerPipes.pop(0)
             newPipe = getRandomPipe()
@@ -137,7 +142,6 @@ def mainGame():
             lowerPipes.append(newPipe[1])
         
 
-        # draw sprites
         SCREEN.blit(IMAGES['background'], (0,0))
 	SCREEN.blit(IMAGES['player'][playerWingPos], (playerx, playery))
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
@@ -149,14 +153,13 @@ def mainGame():
         
 def getRandomPipe():
     """returns a randomly generated pipe"""
-    # y of gap between upper and lower pipe
-    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
+    gapY = random.randrange(Min_PipeY, Max_PipeY) 
     pipeHeight = IMAGES['pipe'][0].get_height()
     pipeX = SCREENWIDTH + 10
     
     return [
-        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
-        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
+        {'x': pipeX, 'y': gapY - pipeHeight},  
+        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, 
     ]
     
 def showScore(score):
@@ -165,19 +168,19 @@ def showScore(score):
     totalWidth = 0 # total width of all numbers to be printed
 
     for digit in scoreDigits:
-        totalWidth += IMAGES['numbers'][int(digit)].get_width()
+        totalWidth += IMAGES['numbers'][int(digit)].get_width() #determine the width of all digit images in score
 
-    Xoffset = (SCREENWIDTH - totalWidth) /2
+    Xoffset = (SCREENWIDTH - totalWidth) /2 #The distance from left a which you want to display each digit from scoreDIgits
 
     for digit in scoreDigits:
         SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
-        Xoffset += IMAGES['numbers'][int(digit)].get_width()
+        Xoffset += IMAGES['numbers'][int(digit)].get_width() #skip the distance occupied by current score digit and render the next score digit at this nw Xoffset position
 
 
 
 def checkCrash(player, upperPipes, lowerPipes):
     '''
-    checks if the player has crashed with any object or the ground.
+    """checks if the player has crashed with any object or the ground."""
 
         The function returns a list of boolean values.
         Following are the possible returned values
@@ -190,7 +193,7 @@ def checkCrash(player, upperPipes, lowerPipes):
     i.e. the return value will not make any sense.
     '''
 
-    # Assignes the width and the height of the player hit-box as per it's image asset.
+    # Assigns the width and the height of the player hit-box as per it's image asset.
     player['w'] = IMAGES['player'][0].get_width()
     player['h'] = IMAGES['player'][0].get_height()
 
@@ -269,6 +272,10 @@ def checkCrash(player, upperPipes, lowerPipes):
     # No collision with pipes or the ground. Starter code will by default return False,False
     #Follow instructions to add checks for collisions accordingly.            
     return [False, False]
+
+"""
+..............Task five ends when your game stops on collision with pipes or on hitting the ground during freefall...............
+"""
 
 if __name__ == '__main__':
     main()
