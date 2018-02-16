@@ -1,3 +1,8 @@
+#.............................Final Task..................................................
+#......Our game is almost complete! We just need to make the bird fall under gravity if it's pipe crash
+#......Whether it's pipe crash or ground crash, we need to stop the game and allow the player to play again if he presses ESCAPE or UP key
+#......Follow the instructions given by comments on each line if you need hints
+#.........................................................................................
 from itertools import cycle
 import random
 import sys
@@ -9,7 +14,7 @@ FPS = 30
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 BACKGROUND   = 'assets/sprites/background-day.png'
-PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
+PIPEGAPSIZE  = 100 
 Max_PipeY    =  220
 Min_PipeY    =  100
 
@@ -30,7 +35,6 @@ def main():
     pygame.display.set_caption('Flappy Bird')
 
     IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
-    	# numbers sprites for score display
     IMAGES['numbers'] = (
         pygame.image.load('assets/sprites/0.png').convert_alpha(),
         pygame.image.load('assets/sprites/1.png').convert_alpha(),
@@ -64,34 +68,58 @@ def main():
     SOUNDS['hit']    = pygame.mixer.Sound('assets/audio/hit' + soundExt)
     
     while True:
-        crashInfo = mainGame()
-	showGameOverScreen(crashInfo)
-	
+        #mainGame()
+        '''
+        Change the above code to store the dictionary returned by mainGame() function
+        Call showGameOverScreen(your_mainGame_dictionary) to end the game
+	'''
+def getRandomPipe():
+    """returns a randomly generated pipe"""
+    gapY = random.randrange(Min_PipeY, Max_PipeY) 
+    pipeHeight = IMAGES['pipe'][0].get_height()
+    pipeX = SCREENWIDTH + 10
+    
+    return [
+        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
+        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
+    ]
+
+def showScore(score):
+    """displays score in center of screen"""
+    scoreDigits = str(score)
+    totalWidth = 0 
+
+    for digit in scoreDigits:
+        totalWidth += IMAGES['numbers'][int(digit)].get_width()
+
+    Xoffset = (SCREENWIDTH - totalWidth) /2
+
+    for digit in scoreDigits:
+        SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
+        Xoffset += IMAGES['numbers'][int(digit)].get_width()
+
 
 def mainGame():
     playerFlap = cycle([0, 1, 2, 1])
     playerx, playery = SCREENWIDTH*0.2, SCREENHEIGHT/2
-    playerVelY    =  4   # player's velocity along Y, default same as playerFlapped
-    gravity    =   1   # players downward accleration
-    playerUp =  -9   # players speed on flapping
-    loopIter      =   0
-    playerWingPos   =   0
-    score         =   0
-    # get 2 new pipes to add to upperPipes lowerPipes list
+    playerVelY       =   4   
+    gravity          =   1   
+    playerUp         =  -9 
+    loopIter         =   0
+    playerWingPos    =   0
+    score            =   0
     newPipe1 = getRandomPipe()
     newPipe2 = getRandomPipe()
 
-    # list of upper pipes
     upperPipes = [
         {'x': newPipe1[0]['x'] , 'y': newPipe1[0]['y']},
         {'x': newPipe2[0]['x'] + (SCREENWIDTH / 2), 'y': newPipe2[0]['y']},
-    ] #inital position of upper pipe
+    ]
 
-    # list of lowerpipe
     lowerPipes = [
         {'x': newPipe1[1]['x'] , 'y': newPipe1[1]['y']},
         {'x': newPipe2[1]['x'] + (SCREENWIDTH / 2), 'y': newPipe2[1]['y']},
-    ] #inital position of lower pipe
+    ]
 
     pipeVelX = -4
 
@@ -101,12 +129,11 @@ def mainGame():
                 pygame.quit()
                 sys.exit()
 	    if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-		playerVelY = playerUp #accelerate karvao
+		playerVelY = playerUp
                 SOUNDS['wing'].play()
         playerVelY += gravity
         playery += playerVelY
 
-        # check for crash here
         crashTest = checkCrash({'x': playerx, 'y': playery},
                                upperPipes, lowerPipes)
         if crashTest[0]:
@@ -121,7 +148,6 @@ def mainGame():
                 'playerVelY': gravity
             }
 
-	# check for score
         playerMidPos = playerx + IMAGES['player'][0].get_width() / 2
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + IMAGES['pipe'][0].get_width() / 2
@@ -129,7 +155,6 @@ def mainGame():
                 score += 1
                 SOUNDS['point'].play()
 	
-	#in simple terms, player wing flap karane 
         if (loopIter + 1) % 3 == 0:
             playerWingPos = next(playerFlap)
         loopIter = (loopIter + 1) % 30
@@ -138,8 +163,7 @@ def mainGame():
             uPipe['x'] += pipeVelX
             lPipe['x'] += pipeVelX
 	
-	# remove first pipe if its out of the screen and add new one 
-        if upperPipes[0]['x'] < -IMAGES['pipe'][0].get_width(): #obviously -(width) hi hoga
+        if upperPipes[0]['x'] < -IMAGES['pipe'][0].get_width(): 
             upperPipes.pop(0)
             lowerPipes.pop(0)
             newPipe = getRandomPipe()
@@ -147,7 +171,6 @@ def mainGame():
             lowerPipes.append(newPipe[1])
         
 
-        # draw sprites
         SCREEN.blit(IMAGES['background'], (0,0))
 	SCREEN.blit(IMAGES['player'][playerWingPos], (playerx, playery))
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
@@ -157,90 +180,60 @@ def mainGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
         
-def getRandomPipe():
-    """returns a randomly generated pipe"""
-    # y of gap between upper and lower pipe
-    gapY = random.randrange(Min_PipeY, Max_PipeY) #Range for bottom left most y coordinate of upper pipe 
-    pipeHeight = IMAGES['pipe'][0].get_height()
-    pipeX = SCREENWIDTH + 10
-    
-    return [
-        {'x': pipeX, 'y': gapY - pipeHeight},  # upper pipe
-        {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, # lower pipe
-    ]
-
-def showScore(score):
-    """displays score in center of screen"""
-    scoreDigits = str(score)
-    totalWidth = 0 # total width of all numbers to be printed
-
-    for digit in scoreDigits:
-        totalWidth += IMAGES['numbers'][int(digit)].get_width()
-
-    Xoffset = (SCREENWIDTH - totalWidth) /2
-
-    for digit in scoreDigits:
-        SCREEN.blit(IMAGES['numbers'][int(digit)], (Xoffset, SCREENHEIGHT * 0.1))
-        Xoffset += IMAGES['numbers'][int(digit)].get_width()
-
 def checkCrash(player, upperPipes, lowerPipes):
     """returns True if player collides with base or pipes."""
+    #Store bird's height and width
     player['w'] = IMAGES['player'][0].get_width()
     player['h'] = IMAGES['player'][0].get_height()
 
-    # if player crashes into ground
+    # if player has touched the ground
     if player['y'] + player['h'] >= SCREENHEIGHT:
-        return [True, True]
+        return [True, True] #second True is for ground crash
     else:
-
+        #if not ground crash then see if it's collision with pipe
         playerRect = pygame.Rect(player['x'], player['y'],
-                      player['w'], player['h'])
-        pipeW = IMAGES['pipe'][0].get_width()
+                      player['w'], player['h']) #Draw rectangle around player
+        pipeW = IMAGES['pipe'][0].get_width() 
         pipeH = IMAGES['pipe'][0].get_height()
 
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
-            # upper and lower pipe rects
+            #Draw rectangle around upper and lower pipes
             uPipeRect = pygame.Rect(uPipe['x'], uPipe['y'], pipeW, pipeH)
             lPipeRect = pygame.Rect(lPipe['x'], lPipe['y'], pipeW, pipeH)
 
-            uCollide = playerRect.colliderect(uPipeRect)
-            lCollide = playerRect.colliderect(lPipeRect)
+            uCollide = playerRect.colliderect(uPipeRect) #if the bird rectangle has collided with upper pipe rectangle
+            lCollide = playerRect.colliderect(lPipeRect) #if the bird rectangle has collided with upper pipe rectangle
 
             if uCollide or lCollide:
-                return [True, False]
+                return [True, False] #False means it is not ground collision but a pipe collision
 
     return [False, False]
     
 def showGameOverScreen(crashInfo):
-    """crashes the player down and shows gameover image"""
-    score = crashInfo['score']
-    playerx = crashInfo['x']
-    playery = crashInfo['y']
-    playerHeight = IMAGES['player'][0].get_height()
-    playerVelY = crashInfo['playerVelY']
-    gravity = crashInfo['playerVelY']
+    """crashes the player down if it is pipe collision"""
+    '''
+    1.Create variables to store all the data passed into crashInfo,
+    score, playerx, playery, playerVelY, gravity=playerVelY, upperPipes, lowerPipes
+    2.Get player height from IMAGES
+    3.Play hit sound
+    4. If it is pipe crash, play 'die' sound as well
 
-    upperPipes, lowerPipes = crashInfo['upperPipes'], crashInfo['lowerPipes']
-
-    # play hit and die sounds
-    SOUNDS['hit'].play()
-    if not crashInfo['groundCrash']:
-        SOUNDS['die'].play()
-
+    '''
     while True:
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                if playery + playerHeight >= SCREENHEIGHT:
-                    return
-	# player velocity change
-        playerVelY += gravity
-        # player y shift till bird touches the ground
-        if playery + playerHeight < SCREENHEIGHT:
-            playery += playerVelY
-
+                """
+		If the player has pressed UP or SPACEBAR and
+		if the player has reached the ground(by ground collision or by freefall from hitting any pipe):
+		return to the main function() so that he can play again(Remember the infinite while loop?)
+		"""
+        
+        '''
+        Make playery increase with increasing velocity(use gravity) until bird touches the ground
+        '''
         # draw sprites
         SCREEN.blit(IMAGES['background'], (0,0))
 
@@ -256,3 +249,4 @@ def showGameOverScreen(crashInfo):
 
 if __name__ == '__main__':
     main()
+
