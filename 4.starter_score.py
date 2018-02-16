@@ -64,11 +64,11 @@ def main():
         mainGame()
         
 def getRandomPipe():
-    gapY = random.randrange(Min_PipeY, Max_PipeY) 
-    pipeHeight = IMAGES['pipe'][0].get_height()
-    pipeX = SCREENWIDTH + 10
+    gapY = random.randrange(Min_PipeY, Max_PipeY) #The top left Y coordinate of gap should be random and in the range (Min_PipeY, Max_PipeY)
+    pipeHeight = IMAGES['pipe'][0].get_height() #Get pipe's height
+    pipeX = SCREENWIDTH + 10 #The pipe's x coordinate is outside screen initially so that if gets painted outside the player's SCREEN, set this to SCREENWIDTH/2 to understand it better
     
-    return [
+    return [ #Return the upperpipe's x and y coordinate and lower pipe's x and y coordinate 
         {'x': pipeX, 'y': gapY - pipeHeight},  
         {'x': pipeX, 'y': gapY + PIPEGAPSIZE}, 
     ]
@@ -77,16 +77,16 @@ def getRandomPipe():
 def mainGame():
     playerFlap = cycle([0, 1, 2, 1])
     playerx, playery = SCREENWIDTH*0.2, SCREENHEIGHT/2
-    playerVelY    =  4  
-    gravity    =   1   
-    playerUp =  -9   
-    loopIter      =   0
-    playerWingPos   =   0
-    score         =   0
-
-    newPipe1 = getRandomPipe()
+    playerVelY       =   4  
+    gravity          =   1   
+    playerUp         =  -9   
+    loopIter         =   0
+    playerWingPos    =   0
+    score            =   0
+    #intially we load two pipe's outside the SCREEN
+    newPipe1 = getRandomPipe() 
     newPipe2 = getRandomPipe()
-
+    #Add these pipes to list of upperPipes and lowerPipes
     upperPipes = [
         {'x': newPipe1[0]['x'] , 'y': newPipe1[0]['y']},
         {'x': newPipe2[0]['x'] + (SCREENWIDTH / 2), 'y': newPipe2[0]['y']},
@@ -135,10 +135,12 @@ def mainGame():
             playerWingPos = next(playerFlap)
         loopIter = (loopIter + 1) % 30
         
+	#Make pipes move left by pipeVel speed
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
             uPipe['x'] += pipeVelX
             lPipe['x'] += pipeVelX
 	
+	#Remove pipe when it's COMPLETELY out of screen and add a new pipe at the same time
         if upperPipes[0]['x'] < -IMAGES['pipe'][0].get_width(): 
             upperPipes.pop(0)
             lowerPipes.pop(0)
@@ -149,6 +151,7 @@ def mainGame():
         SCREEN.blit(IMAGES['background'], (0,0))
 	SCREEN.blit(IMAGES['player'][playerWingPos], (playerx, playery))
 	
+	#Draw all the pipes onto the screen
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
             SCREEN.blit(IMAGES['pipe'][0], (uPipe['x'], uPipe['y']))
             SCREEN.blit(IMAGES['pipe'][1], (lPipe['x'], lPipe['y']))
