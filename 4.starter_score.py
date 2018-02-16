@@ -1,3 +1,10 @@
+#.............................Fourth Task..................................................
+#......We now need to keep scores of our game
+#......Subtask 1: Load the bird's images with it's flap upwards, downwards and in mid and display the bird onto the screen 
+#......Subtask 2: Make the player move up if UP or SPACEBAR is pressed, else let it freefall under gravity. 
+#......Subtask 3: Make the bird flap. (Hint: cycle through indices using % operator)
+#......Follow the instructions given by comments on each line if you need hints
+#.........................................................................................
 from itertools import cycle
 import random
 import sys
@@ -37,11 +44,10 @@ def main():
                 pygame.image.load(PIPE).convert_alpha(), 180),
             pygame.image.load(PIPE).convert_alpha(),
         )
-        
-    # Load all the number sprites(images) into the dictionary with key = 'numbers'
-    '''
-    
-    '''
+    """  
+    Load all the number sprites(images) into the dictionary with key = 'numbers' 
+    """
+    #Your code
         
     if 'win' in sys.platform:
        	soundExt = '.wav'	
@@ -49,10 +55,10 @@ def main():
         soundExt = '.ogg'
     SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
 
-    # Create an entry into SOUNDS dictionary to store 'point' sound
-    '''
-    
-    '''
+    """
+    Create an entry into SOUNDS dictionary to store 'point' sound with key 'point'
+    """
+    #Your code
 
     while True:
         mainGame()
@@ -104,18 +110,25 @@ def mainGame():
         playerVelY += gravity
         playery += playerVelY
 
-	# check for score
-
-        # Locate center of player bird's location and store it in playerMidPos
+        """
+        Locate center of player bird's location and store it in playerMidPos
+	"""
+	#Your code
         
-
-        # iterate over upperPipes and check whether bird crossed pipe or not, update score accordingly
+        """
+        1.Iterate over upperPipes 
+	2.Check whether the bird crossed pipe's mid or not 
+	3.Update score accordingly
+	4.Play the 'point' sound
+        """
+	#Your code
         
-        '''
         
-        '''
-
-        # call showScore
+       
+        """
+        Call showScore() which will display your score with the help of number sprites
+	"""
+	#Your Code
         	
 	
         if (loopIter + 1) % 3 == 0:
@@ -146,29 +159,42 @@ def mainGame():
         
 
 def showScore(score):
-    '''to display score in center of the screen'''
+    """to display score in center of the screen"""
+    """
+    Create scoreDigits to store each digit of score as a string 
+    E.g. the score is 23 then scoreDigits should treat '2' and '3' separately as we've to display these numbers separately
+    (There is no sprite '23' there is only '2' and '3')
+    """
+    #Your code
+
+    """
+    Initialize totalWidth(total width of all numbers to be printed) to 0
+    """
+    #Your code
+
+    """
+    Set totalWidth according to size of digit images (use IMAGES dictionary)
+    E.g. for 23, you need the width of '2' and '3' so width('2') + width('3') will be your totalWidth
+    Hint: You can iterate over strings just like you can iterate over lists
+    """
+    #Your code
     
-    # create scoreDigits to store score as a string (type cast) 
-
     
-    # Initialize totalWidth(total width of all numbers to be printed) to 0
+    """
+    Create Xoffset variable and initialize it to the distance from left where you want the first digit of score to appear
+    """
+    #Your code
 
-
-    # Set totalWidth according to size of digit images (use IMAGES)
-    '''
+    """
+    # And finally blit all digits iteratively and increment Xoffset accordingly for subsquent digitis of score
     
-    '''
-    
-    # Create Xoffset variable and initialize it to the distance from left where you want the score to appear
+    """
+    #Your code
 
+"""
+........Task four ends when each time the bird crosses a pipe's mid, the score updates with the point sound being played and the score appears at the top of the screen at center
 
-    # And finally blit all digits iteratively and increment Xoffset accordingly
-    
-    '''
-    
-    '''
-
-
+"""
 
 if __name__ == '__main__':
     main()
