@@ -8,29 +8,45 @@ import sys
 import pygame
 from pygame.locals import *
 
-SCREENWIDTH  = 288
+SCREENWIDTH  = 288 #size of display window
 SCREENHEIGHT = 512
 
-#Create a global constant to store the path for background image with its name with proper file extension
+"""
+Create a global constant 'BACKGROUND' to store the path for background image with its name with proper file extension
+"""
+#Your code
 
-#Create an empty dictionary to store game sprites like bird, pipes, background
+"""
+Create an empty dictionary 'IMAGES' to store game sprites like bird, pipes, background
+"""
+#Your code
+
 
 def main():
 	global SCREEN #Global as it'll be used globally by other functions of the game instead of creating a new local copy everytime
-#Intialize pygame modules
-#Set the display window of appropriate size to SCREEN 
-#Set the title of window as 'Flapy Bird'
-#Load the background image from its path into pygame
-#Doing ________ on images before painting the them on the display is a good practice and supports faster blitting
-#Store this final background image into the empty dictionary created above with the key 'background'
-#Call the main game
-     
+"""
+1.Intialize pygame modules
+2.Set the display window of (SCREENWIDTH, SCREENHEIGHT) size to SCREEN 
+3.Set the title of window as 'Flapy Bird'
+4.Load the background image from its path into pygame
+5.Doing ________ on images before painting the them on the display is a good practice and supports faster blitting
+6.Store this final background image into the empty 'IMAGES' dictionary created above with the key 'background'
+7.Call the main game
+"""
+#Your code
+
 
 def mainGame():
-#Condition for quitting the game
-#Draw images on SCREEN using the dictionary created above and update the display
-     
+"""
+Condition for quitting the game
+Draw images on SCREEN using the IMAGES dictionary created above and update the display
+"""
+#Your code
 
-#-........Task one is complete if you can see a display with the background on it and it closes on pressing quit or escape..........
+
+"""
+........Task one is complete if you can see a display with the background on it and it closes on pressing quit or escape..........
+"""
+
 if __name__ == '__main__':
 	main()
