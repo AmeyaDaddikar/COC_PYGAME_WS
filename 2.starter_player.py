@@ -1,7 +1,8 @@
 #.............................Second Task..................................................
 #......It's time to load the player i.e. the bird into our game
-#......Subtask 1: Load the bird's images with it's flap upwards, downwards and in mid, display the bird onto the screen 
-#......Subtask 2: Make the player move up if UP or SPACEBAR is pressed, else let it freefall under gravity. Also make the bird flap.
+#......Subtask 1: Load the bird's images with it's flap upwards, downwards and in mid and display the bird onto the screen 
+#......Subtask 2: Make the player move up if UP or SPACEBAR is pressed, else let it freefall under gravity. 
+#......Subtask 3: Make the bird flap. (Hint: cycle through indices using % operator)
 #......Follow the instructions given by comments on each line if you need hints
 #.........................................................................................
 from itertools import cycle 
