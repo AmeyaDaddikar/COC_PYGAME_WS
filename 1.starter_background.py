@@ -14,13 +14,16 @@ SCREENHEIGHT = 512
 """
 Create a global constant 'BACKGROUND' to store the path for background image with its name with proper file extension
 """
-#Your code
+###################YOUR CODE#######################
+
+###################################################
 
 """
 Create an empty dictionary 'IMAGES' to store game sprites like bird, pipes, background
 """
-#Your code
+###################YOUR CODE#######################
 
+###################################################
 
 def main():
 	global SCREEN #Global as it'll be used globally by other functions of the game instead of creating a new local copy everytime
@@ -33,15 +36,16 @@ def main():
 6.Store this final background image into the empty 'IMAGES' dictionary created above with the key 'background'
 7.Call the main game
 """
-#Your code
+###################YOUR CODE#######################
 
+###################################################
 
 def mainGame():
-"""
-Condition for quitting the game
-Draw images on SCREEN using the IMAGES dictionary created above and update the display
-"""
-#Your code
+	""" Condition for quitting the game
+		Draw images on SCREEN using the IMAGES dictionary created above and update the display """
+	###################YOUR CODE#######################
+
+	###################################################
 
 
 """

@@ -35,7 +35,9 @@ def main():
     SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption('Flappy Bird')
     IMAGES['background'] = pygame.image.load(BACKGROUND).convert()
-#load the bird in 3 different wing positions and convert_alpha to convert it while retaining the the alpha channel(Remember convert() functions removed an image's alpha channel if it was present in it and then performed the conversion?Hence use convert_alpha)
+    # loading the bird in 3 different wing positions and convert_alpha to convert it while
+    # retaining the the alpha channel(Remember convert() functions removed an image's alpha channel
+    # if it was present in it and then performed the conversion?Hence use convert_alpha)
     IMAGES['player'] = (  
             pygame.image.load(PLAYERS_LIST[0]).convert_alpha(),
             pygame.image.load(PLAYERS_LIST[1]).convert_alpha(),
@@ -45,9 +47,10 @@ def main():
     SUBTASK1:Create a tuple,into IMAGES dictionary with 'pipe' as key,which stores the pair of top and bottom pipes. 
     Remember we've only ONE pipe image. 
     """
-    #your code begins here
-    
-    #your code ends here   
+    ###################YOUR CODE#######################
+
+    ###################################################
+  
     
     if 'win' in sys.platform: #if the OS is windows, use .wav extension else use .ogg sound extension
        	soundExt = '.wav'
@@ -65,16 +68,16 @@ def getRandomPipe():
     """
     SUBTASK2:In a variable gapY,randomly generate and store the Y coordinate of the gap  between upper and lower pipe(top Y coordinate of the gap is nothing but bottom y coordinate of upper pipe). This random Y coordinate should be in the range of Min_PipeY and Max_PipeY(Guess why we've imposed the range constraint?)
     """
-    #your code begins here
+    ###################YOUR CODE#######################
 
-    #your code ends here
-	
+    ###################################################
     """"
     #SUBTASK3:in a variable pipeHeight,store height of pipe from pipe image in IMAGES 
     """
-    #your code begins here
+    ###################YOUR CODE#######################
+    print ""
+    ###################################################
 
-    #your code ends here
 
     """
     SUBTASK4:in a variable pipeX,set the respawn x coordinate for the randomly generated pipe,preferably outside SCREENWIDTH(Do you want the pipe to suddenly appear on the SCREEN out of nowhere?)
@@ -137,42 +140,38 @@ def mainGame():
         playerVelY += gravity #freefall 
         playery += playerVelY #actually make the bird fall by changing its y coordinate
 
-	#flapping animation
+	    #flapping animation
         if (loopIter + 1) % 3 == 0:
             playerWingPos = next(playerFlap)
         loopIter = (loopIter + 1) % 30
         
-	"""
-        SUBTASK8:Update x coordinates of pipe according to pipeVelX, just like you updated the coordinates of bird's image
-	"""
+        """
+        SUBTASK8:Update x coordinates of pipe according to pipeVelX, 
+        just like you updated the coordinates of bird's image
+        """
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
-        #your code begins here
-
-
-        #your code ends here
-	"""
+            ###################YOUR CODE#######################
+            pass
+            ###################################################
+        
+        """
         SUBTASK9:if(pipe out of the screen):
-	1.pop the first pipe pair
-	2.add a new one
-	"""
-        #your code begins here
+        1.pop the first pipe pair
+        2.add a new one
+        """
+        ###################YOUR CODE#######################
 
-
-
-
-        #your code ends here
-        
+        ###################################################
         SCREEN.blit(IMAGES['background'], (0,0))
-	SCREEN.blit(IMAGES['player'][playerWingPos], (playerx, playery))
-        
-	"""
+        SCREEN.blit(IMAGES['player'][playerWingPos], (playerx, playery))
+        """
         SUBTASK10:Blit the upper and lower pipes on to the SCREEN
-	"""
+        """
         for uPipe, lPipe in zip(upperPipes, lowerPipes):
-            #your code begins here
+            ###################YOUR CODE#######################
             SCREEN.blit(    ,(  ,   ))#uPipe
             SCREEN.blit(    ,(  ,   ))#lPipe
-            #your code ends here
+            ###################################################
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
