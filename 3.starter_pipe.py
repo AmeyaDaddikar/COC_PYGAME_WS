@@ -178,7 +178,7 @@ def mainGame():
         FPSCLOCK.tick(FPS)
 
 """
-........Task three ends when your pipes load at random Y coordinates and they move towards left.............
+........Task three ends when your pipes load at random Y coordinates and they move towards left. New pipes should be added and old pipes should be discarded whenever appropriate.............
 """
 
 if __name__ == '__main__':
