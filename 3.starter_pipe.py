@@ -177,5 +177,9 @@ def mainGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
+"""
+........Task three ends when your pipes load at random Y coordinates and they move towards left.............
+"""
+
 if __name__ == '__main__':
     main()
