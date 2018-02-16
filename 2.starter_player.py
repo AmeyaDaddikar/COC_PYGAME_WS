@@ -102,5 +102,9 @@ def mainGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS) #This will ensure your game runs at no more than 'FPS' frames per second, basically controls the game speed
 
+	
+"""
+............Task two is complete if you can control the bird with UP or SPACEBAR KEY, if neither of these keys are pressed, the bird will freefall under gravity. Also, the wings flap after some interval.......................
+"""
 if __name__ == '__main__':
     main()
